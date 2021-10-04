@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Our simple HTTP server</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+  <script type="text/babel">
+
+  const linksDiv = document.querySelector('#links');
+  const addLinkBtn = document.querySelector("#addlink")
+  const form = document.querySelector('#form');
+
+  
+  const responseHandler = (xhr)=>{
+    const content = document.querySelector('#content');
+    console.log(xhr.status);
+    // if xhr.response exist
+    if(xhr.response) {
+
+      } 
+  }
+  const sendGet = (e)=>{
+      /*const requestMethod = document.querySelector('#methodSelect').value;
+      const url = document.querySelector('#urlField').value;
+
+      console.log(url);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open(requestMethod, url);
+
+      xhr.setRequestHeader('Accept', 'application/json');
+
+      xhr.onload = ()=> responseHandler(xhr);
+
+      e.preventDefault();
+      xhr.send();*/
+  }
+  const sendPOST = (e,form) => {
+
+      const action = form.getAttribute('action');
+      const method = form.getAttribute('method');
+      const nameField = document.querySelector('#nameField');
+      const title = document.querySelector('#title');
+      const description = document.querySelector('#info');
+      
+      let inputs = document.getElementsByTagName('input');
+      let urlNames = document.getElementsByClassName('urlName');
+      let links = document.getElementsByClassName('link')
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.open(method, action);
+
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+      xhr.setRequestHeader ('Accept', 'application/json');
+      
+      //set our function to handle the response
+      xhr.onload = ()=> responseHandler(xhr);
+      
+      let formData = `name=${nameField.value}&title=${title.value}&&description=${description.value}`;
+      if(links.length > 0){
+        formData +=`&&linkLength=${links.length}&&links=`;
+      }
+      for(let i =0; i < links.length; i++){
+        formData +=`${urlNames[i].value},${links[i].value},`;
+      }
+      console.log("formData:" + formData);
+      xhr.send(formData);
+  
+      //return false to prevent the browser from trying to change page
+      return false;
+  };
+
+  const makeNewLink = ()=>{
+    console.log("add new link");
+    let urlName = document.createElement("input")
+    urlName.type = "text";
+    urlName.className ="urlName";
+    let newLink = document.createElement("input")
+    newLink.type = "url";
+    newLink.className="link";
+    
+    let container = document.createElement("div");
+    container.appendChild(urlName);
+    container.appendChild(newLink);
+    linksDiv.appendChild(container);
+  }
+  form.addEventListener('submit', (e)=>{
+    //prevent the browser's default action (to send the form on its own)
+    e.preventDefault();
+    sendPOST(e,form); 
+  });
+  addLinkBtn.addEventListener('click', makeNewLink);
+  
+  </script>
+</head>
+<body>
+  <section id="top">
+    <h3>Business Card Generator</h3>
+    <form id="form" action="/GenerateQR" method="post">
+      <div>
+        <label for="name">Name: </label>
+        <input id="nameField" type="text" name="name" /> <br>
+      </div>
+      <div>
+        <label for="job title">Title: </label>
+        <input id="title" type="text" name="title"/> <br>
+      </div>
+      <div>
+        <label for="info">Info: </label> <br>
+        <textarea name="description" id="info" cols="30" rows="10"></textarea> <br>
+      </div>
+      <div id="links">
+        <label for="links">Links: </label>
+        <input type="button" value="+" id="addlink"> <br>
+        <input type="text" name="Name" class="urlName">
+        <input type="url" class="link"> <br>
+      </div>
+      <div>
+        <input id="generate" type="submit" value="Generate" />
+      </div>
+    </form>
+  <section id="content">
+  </section>
+</body>
+</html>
