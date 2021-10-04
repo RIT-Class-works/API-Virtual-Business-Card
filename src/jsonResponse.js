@@ -18,7 +18,7 @@ const addUser = (request, response, userParams) => {
     name: `${userParams.name}`,
     title: `${userParams.title}`,
     description: `${userParams.description}`,
-    links: null
+    links: null,
   };
   console.log(`link length: ${userParams.linkLength}`);
 
