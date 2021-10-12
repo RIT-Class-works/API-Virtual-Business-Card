@@ -44,7 +44,7 @@ const getBusinessCard = (request, response, parsedURL) => {
 
   if (userData) {
     let xml = '<div style="background-color:#73AD21;color:white;width:600px;margin:100px auto auto auto;border: 3px solid DodgerBlue;">';
-    xml += '<h1 style="margin-left:175px"> My business Card </h1>';
+    xml += '<h1 style="text-align:center"> My business Card </h1>';
     xml += `<p style="margin-left:100px"> Name: ${userData.firstName} ${userData.lastName} </p>`;
     xml += `<p style="margin-left:100px"> Email: ${userData.email}  </p>`;
     xml += `<p style="margin-left:100px"> Phone: ${userData.phone}  </p>`;
