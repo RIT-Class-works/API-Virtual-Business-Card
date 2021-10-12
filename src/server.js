@@ -57,7 +57,7 @@ const getBusinessCard = (request, response, parsedURL) => {
     }
     xml += '</div>';
 
-    response.writeHead(201, { 'Content-Type': 'text/html' });
+    response.writeHead(200, { 'Content-Type': 'text/html' });
     response.write(xml);
     response.end();
   }
