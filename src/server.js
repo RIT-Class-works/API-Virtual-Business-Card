@@ -40,29 +40,38 @@ const postHandler = (request, response) => {
     jsonHandler.addUser(request, response, bodyParams);
   });
 };
+const getBusinessCard = (request, response, parsedURL) => {
+  const params = query.parse(parsedURL.query);
+  console.log(`user id: ${params.id}`);
+  const userData = jsonHandler.getUser(params.id);
+
+  if (userData) {
+    response.writeHead(201, { 'Content-Type': 'text/html' });
+    response.write(userData.name);
+    response.end();
+  }
+};
 const urlStruct = {
 
   GET: {
     '/': htmlHandler.getIndex,
     '/style.css': htmlHandler.getCSS,
-    '/getUsers': jsonHandler.getResponse,
-    '/notReal': jsonHandler.getResponse,
+    '/getcard': getBusinessCard,
   },
   POST: {
     '/GenerateQR': postHandler,
   },
-  notFound: jsonHandler.getResponse,
 };
-
 const onRequest = (request, response) => {
   const parsedURL = url.parse(request.url);
+
   console.log(parsedURL.pathname);
   console.log(request.method);
   if (urlStruct[request.method][parsedURL.pathname]) {
     console.log('Pathname and Handler: Checked');
-    urlStruct[request.method][parsedURL.pathname](request, response, parsedURL.pathname);
+    urlStruct[request.method][parsedURL.pathname](request, response, parsedURL);
   } else {
-    urlStruct.notFound(request, response, parsedURL.pathname);
+    console.log('Unexpected error at finding pathname');
   }
 };
 

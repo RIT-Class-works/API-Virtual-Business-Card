@@ -12,12 +12,14 @@
   const form = document.querySelector('#form');
 
   
-  const responseHandler = (xhr)=>{
+  const postHandler = (xhr)=>{
     const content = document.querySelector('#content');
     console.log(xhr.status);
     // if xhr.response exist
     if(xhr.response) {
-
+        let image = document.createElement("img");
+        image.src = JSON.parse(xhr.response).imageSrc;
+        content.appendChild(image);
       } 
   }
   const sendGet = (e)=>{
@@ -57,7 +59,7 @@
       xhr.setRequestHeader ('Accept', 'application/json');
       
       //set our function to handle the response
-      xhr.onload = ()=> responseHandler(xhr);
+      xhr.onload = ()=> postHandler(xhr);
       
       let formData = `name=${nameField.value}&title=${title.value}&&description=${description.value}`;
       if(links.length > 0){

@@ -1,20 +1,48 @@
+const QRCode = require('qrcode');
+
 const userData = {};
-const writeMetaData = (resquest, response, statusCode) => {
-  response.writeHead(statusCode, 'Content-Type: application/json');
-  response.end();
-};
+
 const writeResponse = (request, response, statusCode, object) => {
   response.writeHead(statusCode, 'Content-Type: application/json');
   response.write(JSON.stringify(object));
   response.end();
 };
-const addUser = (request, response, userParams) => {
+const generateQR = (request, response, urlString) => {
+  console.log(urlString);
+  const opts = {
+    errorCorrectionLevel: 'H',
+    type: 'image/jpeg',
+    quality: 0.3,
+    margin: 1,
+    color: {
+      dark: '#010599FF',
+      light: '#FFBF60FF',
+    },
+  };
+
+  QRCode.toDataURL(urlString, opts, (err, url) => {
+    if (err) throw err;
+    console.log(url);
+
+    const json = {
+      imageSrc: url,
+    };
+    console.log(`json url: ${json.imageSrc}`);
+    writeResponse(request, response, 201, json);
+  });
+};
+
+const addUser = async (request, response, userParams) => {
   // if missing parameter
 
   // update exist user
 
   // create new user
-  userData[userParams.name] = {
+
+  const id = new Date().getTime();
+  console.log(`time: ${id}`);
+
+  userData[id] = {
     name: `${userParams.name}`,
     title: `${userParams.title}`,
     description: `${userParams.description}`,
@@ -25,55 +53,20 @@ const addUser = (request, response, userParams) => {
   if (userParams.linkLength > 0) {
     const linkArray = userParams.links.split(',');
     console.log(linkArray);
-    userData[userParams.name].links = linkArray;
+    userData[id].links = linkArray;
   }
-  console.log(userData[userParams.name]);
-  writeResponse(request, response, 201, userData[userParams.name]);
+  generateQR(request, response, `${request.headers.host}/getcard?id=${id}`);
 };
+const getUser = (id) => {
+  if (userData[id]) {
+    return userData[id];
+  }
 
-// return a javascript obj
-const getUsers = () => {
-  const users = {
-    userData,
-  };
-  return users;
-};
-let object;
-const getResponse = (request, response, pathName) => {
-  switch (pathName) {
-    case '/getUsers':
-      console.log('Cased Handled: checked');
-      object = getUsers();
-      writeResponse(request, response, 200, object);
-      break;
-    default:
-      // not real
-      object = {
-        id: 'NotFound',
-        message: 'No resource has been found',
-      };
-      writeResponse(request, response, 404, object);
-      break;
-  }
-};
-
-const getMetaData = (request, response, pathName) => {
-  switch (pathName) {
-    case '/getUsers':
-      writeMetaData(request, response, 200);
-      break;
-    case '/notReal':
-      writeMetaData(request, response, 404);
-      break;
-    default:
-      console.log('Unexpected Error at Url PathName (metadata)');
-      break;
-  }
+  console.log('no user of this id found');
+  return null;
 };
 
 module.exports = {
-  getResponse,
-  getMetaData,
   addUser,
-
+  getUser,
 };
