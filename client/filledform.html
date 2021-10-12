@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Virtual Business Card</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./custom.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+    <script type="text/babel">
+
+    const linksDiv = document.querySelector('#links');
+    const addLinkBtn = document.querySelector("#addlink")
+    const form = document.querySelector('#form');
+
+    
+    const postHandler = (xhr)=>{
+    const content = document.querySelector('#content');
+    console.log(xhr.status);
+    // if xhr.response exist
+    if(xhr.response) {
+        let image = document.createElement("img");
+        image.src = JSON.parse(xhr.response).imageSrc;
+        image.style.width = "30%"
+        image.style.height = "30%";
+        image.style.marginLeft = "auto";
+        image.style.marginRight = "auto";
+        content.appendChild(image);
+        image.scrollIntoView(true);
+        } 
+    }
+    const sendPOST = (e,form) => {
+
+        const action = form.getAttribute('action');
+        const method = form.getAttribute('method');
+        const firstName = document.querySelector('#firstname');
+        const lastname = document.querySelector('#lastname');
+        const email = document.querySelector('#email');
+        const phone = document.querySelector('#phone')
+        const title = document.querySelector('#title');
+        const description = document.querySelector('#info');
+        
+        //let inputs = document.getElementsByTagName('input');
+        let links = document.getElementsByClassName('link')
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.open(method, action);
+
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        xhr.setRequestHeader ('Accept', 'application/json');
+        
+        //set our function to handle the response
+        xhr.onload = ()=> postHandler(xhr);
+        
+        let formData = `firstName=${firstName.value}&lastName=${lastname.value}&email=${email.value}&phone=${phone.value}&title=${title.value}&&description=${description.value}`;
+        if(links.length > 0){
+        formData +=`&&linkLength=${links.length}&&links=`;
+        }
+        for(let i =0; i < links.length; i++){
+        formData +=`${links[i].value},`;
+        }
+        console.log("formData:" + formData);
+        xhr.send(formData);
+    
+        //return false to prevent the browser from trying to change page
+        return false;
+    };
+
+    const makeNewLink = ()=>{
+    console.log("add new link");
+    let newLink = document.createElement("input")
+    newLink.type = "url";
+    newLink.className = 'link';
+    linksDiv.appendChild(newLink);
+    }
+    form.addEventListener('submit', (e)=>{
+    //prevent the browser's default action (to send the form on its own)
+    e.preventDefault();
+    sendPOST(e,form); 
+    });
+    addLinkBtn.addEventListener('click', makeNewLink);
+    
+    </script>
+  </head>
+  <body>
+      <!-- I use and modified a template from w3doc form-->
+    <div class="testbox">
+      <form id="form" action="/GenerateQR" method="post">
+        <div class="banner">
+          <h1>Virtual Business Card</h1>
+        </div>
+        <div class="item">
+          <p>Name</p>
+          <div class="name-item">
+            <input type="text" name="name" placeholder="First" id="firstname"/>
+            <input type="text" name="name" placeholder="Last" id="lastname"/>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="item">
+            <p>Email</p>
+            <input type="text" name="name" id="email"/>
+          </div>
+          <div class="item">
+            <p>Phone</p>
+            <input type="text" name="name" id="phone"/>
+          </div>
+        </div>
+        <div class="item">
+          <p>Job/Position</p>
+          <input type="text" name="name" id="title"/>
+        </div>
+        <div class="item">
+          <p>Description About Yourself</p>
+          <textarea rows="3" id="info" required></textarea>
+        </div>
+        <div class="item" id="links">
+          <p>Your Links</p><input type="button" value="+" id="addlink"> <br>
+          <input type="url" class="link"> <br>
+        </div>
+        <div class="btn-block">
+          <button id="generate" type="submit">Generate</button>
+        </div>
+        <div id="content">
+        </div>
+      </form>
+    </div>

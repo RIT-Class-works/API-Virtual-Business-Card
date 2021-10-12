@@ -1,6 +1,3 @@
-// create server
-// urlstruct for loading index
-
 const http = require('http');
 const url = require('url');
 const query = require('querystring');
@@ -46,8 +43,22 @@ const getBusinessCard = (request, response, parsedURL) => {
   const userData = jsonHandler.getUser(params.id);
 
   if (userData) {
+    let xml = '<div style="background-color:#73AD21;color:white;width:600px;margin:100px auto auto auto;border: 3px solid DodgerBlue;">';
+    xml += '<h1 style="margin-left:175px"> My business Card </h1>';
+    xml += `<p style="margin-left:100px"> Name: ${userData.firstName} ${userData.lastName} </p>`;
+    xml += `<p style="margin-left:100px"> Email: ${userData.email}  </p>`;
+    xml += `<p style="margin-left:100px"> Phone: ${userData.phone}  </p>`;
+    xml += `<p style="margin-left:100px"> Job/Position: ${userData.title} </p>`;
+    xml += `<p style="margin-left:100px; margin-right:100px"> Description: ${userData.description} </p>`;
+    // xml += `<p> ${userData.description} </p>`;
+    xml += '<p style="margin-left:100px"> My Links: </p>';
+    for (let i = 0; i < userData.links.length - 1; i++) {
+      xml += `<p style="margin-left:100px;margin-right:100px"><a href="${userData.links[0]}">${userData.links[0]}</a></p>`;
+    }
+    xml += '</div>';
+
     response.writeHead(201, { 'Content-Type': 'text/html' });
-    response.write(userData.name);
+    response.write(xml);
     response.end();
   }
 };
@@ -55,8 +66,9 @@ const urlStruct = {
 
   GET: {
     '/': htmlHandler.getIndex,
-    '/style.css': htmlHandler.getCSS,
+    '/custom.css': htmlHandler.getCSS,
     '/getcard': getBusinessCard,
+    '/images/background.png': htmlHandler.getBackground,
   },
   POST: {
     '/GenerateQR': postHandler,
@@ -77,5 +89,3 @@ const onRequest = (request, response) => {
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 http.createServer(onRequest).listen(port);
-
-console.log(`Listening on 127.0.0.1: ${port}`);

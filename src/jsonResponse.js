@@ -43,11 +43,15 @@ const addUser = async (request, response, userParams) => {
   console.log(`time: ${id}`);
 
   userData[id] = {
-    name: `${userParams.name}`,
+    firstName: `${userParams.firstName}`,
+    lastName: `${userParams.lastName}`,
+    email: `${userParams.email}`,
+    phone: `${userParams.phone}`,
     title: `${userParams.title}`,
     description: `${userParams.description}`,
     links: null,
   };
+
   console.log(`link length: ${userParams.linkLength}`);
 
   if (userParams.linkLength > 0) {
@@ -55,6 +59,7 @@ const addUser = async (request, response, userParams) => {
     console.log(linkArray);
     userData[id].links = linkArray;
   }
+  console.log(userData[id]);
   generateQR(request, response, `${request.headers.host}/getcard?id=${id}`);
 };
 const getUser = (id) => {
