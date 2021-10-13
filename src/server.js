@@ -49,8 +49,7 @@ const getBusinessCard = (request, response, parsedURL) => {
     xml += `<p style="margin-left:100px"> Email: ${userData.email}  </p>`;
     xml += `<p style="margin-left:100px"> Phone: ${userData.phone}  </p>`;
     xml += `<p style="margin-left:100px"> Job/Position: ${userData.title} </p>`;
-    xml += `<p style="margin-left:100px; margin-right:100px"> Description: ${userData.description} </p>`;
-    // xml += `<p> ${userData.description} </p>`;
+    xml += `<p style="margin-left:100px;margin-right:100px;overflow-wrap: break-word;"> Description: ${userData.description} </p>`;
     xml += '<p style="margin-left:100px"> My Links: </p>';
     for (let i = 0; i < userData.links.length -1; i++) {
       xml += `<p style="margin-left:100px;margin-right:100px"><a style="overflow-wrap: break-word;" href="${userData.links[i]}">${userData.links[i]}</a></p>`;
